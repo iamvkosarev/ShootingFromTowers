@@ -9,6 +9,7 @@ namespace Kuhpik
         minPowerOfBulletsExplosion,
         maxPowerOfBulletsExplosion,
         playerSpeed,
+        playerRotatingSpeed,
         delayBetweenShoots,
         speedOfBullet
 
