@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Kuhpik;
+using System;
 
 public class LoadingSystem : GameSystem, IIniting
 {
@@ -9,13 +10,34 @@ public class LoadingSystem : GameSystem, IIniting
     [SerializeField] private Transform cameraTarget;
     [SerializeField] private Transform playerTarget;
     [SerializeField] private PlayerElementsComponent playerElements;
+    [SerializeField] private GameObject enemiePrefab;
+    [SerializeField] private int enemiesNum = 1;
     void IIniting.OnInit()
     {
         config.Init(config.GameValusConfigs);
+        CreatEnemies();
+        SetParameters();
+        Bootstrap.ChangeGameState(EGamestate.Game);
+    }
+
+    private void CreatEnemies()
+    {
+        var enemiesParent = new GameObject("Enemies");
+        game.enemies = new List<EnemieElementsComponent>();
+        for (int i = 0; i < enemiesNum; i++)
+        {
+            var enemieGO = Instantiate(enemiePrefab, enemiesParent.transform);
+            var point = Bootstrap.GetSystem<EnemiesMovingSystem>().GetPointInMovingZone();
+            enemieGO.transform.position = point;
+            game.enemies.Add(enemieGO.GetComponent<EnemieElementsComponent>());
+            game.enemies[i].currentMovingPos = enemieGO.transform.position;
+        }
+    }
+
+    private void SetParameters()
+    {
         game.playerElements = playerElements;
         game.playerTarget = playerTarget;
         game.camera = camera;
-
-        Bootstrap.ChangeGameState(EGamestate.Game);
     }
 }

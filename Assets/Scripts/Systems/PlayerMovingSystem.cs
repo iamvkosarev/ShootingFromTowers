@@ -5,11 +5,16 @@ using UnityEngine.AI;
 using Kuhpik;
 using System;
 
-public class PlayerMovingSystem : GameSystem, IUpdating
+public class PlayerMovingSystem : GameSystem, IUpdating, IIniting
 {
+    void IIniting.OnInit()
+    {
+        player.isMoving = true;
+    }
     
     void IUpdating.OnUpdate()
     {
+        if(player.isMoving)
         if (Input.GetMouseButton(0))
         {
             MoveToTouchedPoint();
