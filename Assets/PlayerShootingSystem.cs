@@ -7,11 +7,33 @@ using System.Threading.Tasks;
 using Kuhpik.Pooling;
 using System;
 
-public class PlayerShootingSystem : GameSystem, IUpdating
+public class PlayerShootingSystem : GameSystem, IUpdating, IIniting, IFixedUpdating
 {
     [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private int maxBulletsOnScene;
+    [SerializeField] private float timeWhileBulletInactive;
+    private Queue<BulletComponent> bulletsPool;
 
     float time = 0;
+
+    void IIniting.OnInit()
+    {
+        bulletsPool = new Queue<BulletComponent>();
+        for (int i = 0; i < maxBulletsOnScene; i++)
+        {
+            GameObject newBullet = Instantiate(bulletPrefab);
+            newBullet.SetActive(false);
+            bulletsPool.Enqueue(newBullet.GetComponent<BulletComponent>());
+        }
+    }
+    void IFixedUpdating.OnFixedUpdate()
+    {
+        foreach (var bullet in game.bullets)
+        {
+            if (!bullet.gameObject.active) { continue; }
+            bullet.transform.position += bullet.movingVelocity * Time.deltaTime;
+        }
+    }
     void IUpdating.OnUpdate()
     {
         if (!player.canShoot) { return; }
@@ -40,9 +62,27 @@ public class PlayerShootingSystem : GameSystem, IUpdating
         {
             var posToMove = hit.point;
             var distance = Vector3.Distance(game.playerShootingPoint.position, posToMove);
-            var newBullet = PoolingSystem.GetObject(bulletPrefab);
+            var newBullet = bulletsPool.Dequeue();
+            newBullet.gameObject.SetActive(true);
+            newBullet.movingEffect.Stop();
+            if (!game.bullets.Contains(newBullet))
+            {
+                game.bullets.Add(newBullet);
+            }
+            bulletsPool.Enqueue(newBullet);
+            StartCoroutine(WaitWhileInactive(newBullet));
             newBullet.transform.position = game.playerShootingPoint.position;
-            newBullet.transform.DOMove(posToMove, distance / config.GetValue(EGameValue.speedOfBullet));
+            newBullet.movingEffect.Play();
+            newBullet.movingVelocity = config.GetValue(EGameValue.speedOfBullet) * (posToMove - game.playerShootingPoint.position).normalized;
+            //newBullet.transform.DOMove(posToMove, distance / config.GetValue(EGameValue.speedOfBullet));
+
         }
+    }
+
+    IEnumerator WaitWhileInactive(BulletComponent bullet)
+    {
+        bullet.canCheck = false;
+        yield return new WaitForSeconds(timeWhileBulletInactive);
+        bullet.canCheck = true;
     }
 }

@@ -31,17 +31,29 @@ public class LoadingSystem : GameSystem, IIniting
             var point = Bootstrap.GetSystem<EnemiesMovingSystem>().GetPointInMovingZone();
             enemieGO.transform.position = point;
             game.enemies.Add(enemieGO.GetComponent<EnemieElementsComponent>());
+            SetHitBoxesForEnemie(game.enemies[i]);
+            Bootstrap.GetSystem<CollisionSystem>().ChangeEnemieRagdollState(game.enemies[i], false);
             game.enemies[i].currentMovingPos = enemieGO.transform.position;
         }
     }
 
     private void SetParameters()
     {
+        game.bullets = new List<BulletComponent>();
         game.playerShootingPoint = playerShootingPoint;
         game.playerElements = playerElements;
         game.playerTarget = playerTarget;
         game.camera = camera;
         player.canMove = true;
         player.canShoot = false;
+    }
+
+    private void SetHitBoxesForEnemie(EnemieElementsComponent enemie)
+    {
+        foreach (var rb in enemie.ragdollsRigidbodies)
+        {
+            HitBoxComponent hitBox = rb.gameObject.AddComponent<HitBoxComponent>();
+            hitBox.enemieElements = enemie;
+        }
     }
 }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace Kuhpik
 {
@@ -11,5 +12,6 @@ namespace Kuhpik
         public List<EnemieElementsComponent> enemies;
         public Animator cameraSwitchingAnimator;
         public Transform playerShootingPoint;
+        internal List<BulletComponent> bullets;
     }
 }
