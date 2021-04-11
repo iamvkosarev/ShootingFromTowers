@@ -9,6 +9,7 @@ public class LoadingSystem : GameSystem, IIniting
     [SerializeField] private Camera camera;
     [SerializeField] private Transform cameraTarget;
     [SerializeField] private Transform playerTarget;
+    [SerializeField] private Transform playerShootingPoint;
     [SerializeField] private PlayerElementsComponent playerElements;
     [SerializeField] private GameObject enemiePrefab;
     [SerializeField] private int enemiesNum = 1;
@@ -36,8 +37,11 @@ public class LoadingSystem : GameSystem, IIniting
 
     private void SetParameters()
     {
+        game.playerShootingPoint = playerShootingPoint;
         game.playerElements = playerElements;
         game.playerTarget = playerTarget;
         game.camera = camera;
+        player.canMove = true;
+        player.canShoot = false;
     }
 }

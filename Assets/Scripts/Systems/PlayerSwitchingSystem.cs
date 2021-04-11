@@ -8,6 +8,7 @@ public class PlayerSwitchingSystem : GameSystem, IIniting
 {
     [SerializeField] private Animator cameraSwitchingAnimator;
     [SerializeField] private Button switchOffShootingButton;
+    [SerializeField] private Transform pointForShooting;
 
     void IIniting.OnInit()
     {
@@ -29,9 +30,29 @@ public class PlayerSwitchingSystem : GameSystem, IIniting
 
     private void SwitchPlayerAction(bool switchOnShooting)
     {
+        player.canMove = !switchOnShooting;
+        cameraSwitchingAnimator.SetBool("Shoot Mode", switchOnShooting);
+        if (switchOnShooting)
+        {
+            game.playerElements.navMeshAgent.destination = pointForShooting.position;
+            StartCoroutine(WaitWhilePrepering(switchOnShooting));
+        }
+        else
+        {
+            player.canShoot = switchOnShooting;
+            switchOffShootingButton.gameObject.SetActive(switchOnShooting);
+        }
+    }
+
+    IEnumerator WaitWhilePrepering(bool switchOnShooting)
+    {
+        while (game.playerElements.rigidbody.transform.InverseTransformDirection(game.playerElements.navMeshAgent.velocity).z != 0)
+        {
+            yield return null;
+        }
+
         player.canShoot = switchOnShooting;
         switchOffShootingButton.gameObject.SetActive(switchOnShooting);
-        cameraSwitchingAnimator.SetBool("Shoot Mode", switchOnShooting);
     }
 
 }

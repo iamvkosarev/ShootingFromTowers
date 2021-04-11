@@ -10,5 +10,6 @@ namespace Kuhpik
         public Camera camera;
         public List<EnemieElementsComponent> enemies;
         public Animator cameraSwitchingAnimator;
+        public Transform playerShootingPoint;
     }
 }

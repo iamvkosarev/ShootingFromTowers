@@ -7,9 +7,11 @@ using System;
 
 public class PlayerMovingSystem : GameSystem, IUpdating
 {
+
     void IUpdating.OnUpdate()
     {
-        if (player.canShoot) { return; }
+        if (!player.canMove) { return; }
+
         if (Input.GetMouseButton(0))
         {
             MoveToTouchedPoint();
