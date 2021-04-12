@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Kuhpik;
+using DG.Tweening;
 using System;
 
 
@@ -41,6 +42,7 @@ public class PlayerSwitchingSystem : GameSystem, IIniting
         }
         else
         {
+            game.playerElements.animator.SetFloat("ActionTransition", 0f);
             player.canShoot = switchOnShooting;
             switchOffShootingButton.gameObject.SetActive(switchOnShooting);
         }
@@ -48,13 +50,24 @@ public class PlayerSwitchingSystem : GameSystem, IIniting
 
     IEnumerator WaitWhilePrepering(bool switchOnShooting)
     {
-        while (game.playerElements.rigidbody.transform.InverseTransformDirection(game.playerElements.navMeshAgent.velocity).z != 0)
+        while (Vector3.Distance(currentTowerComponent.pointForShooting.position, game.playerElements.rigidbody.transform.position) >= 1f)
         {
             yield return null;
         }
+        var t = 0f;
+        DOTween.To(() => t, x => t = x, 1f, 0.4f).OnUpdate(() =>
+        {
+            game.playerElements.animator.SetFloat("ActionTransition", t);
 
-        player.canShoot = switchOnShooting;
-        switchOffShootingButton.gameObject.SetActive(switchOnShooting);
+        }
+        ).OnComplete(() =>
+        {
+            switchOffShootingButton.gameObject.SetActive(switchOnShooting);
+            player.canShoot = switchOnShooting;
+        }).OnStart(() =>
+        {
+            game.playerElements.rigidbody.transform.DORotate(currentTowerComponent.pointForShooting.eulerAngles, 0.4f);
+        });
     }
 
 }

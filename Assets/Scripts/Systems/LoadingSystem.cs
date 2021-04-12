@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Kuhpik;
 using System;
 
@@ -13,6 +14,7 @@ public class LoadingSystem : GameSystem, IIniting
     [SerializeField] private Transform playerShootingPoint;
     [SerializeField] private PlayerElementsComponent playerElements;
     [SerializeField] private GameObject enemiePrefab;
+    [SerializeField] private Button restartButton;
     [SerializeField] private int enemiesNum = 1;
     void IIniting.OnInit()
     {
@@ -20,17 +22,28 @@ public class LoadingSystem : GameSystem, IIniting
         CreatEnemies();
         SetupTowers();
         SetParameters();
+        restartButton.onClick.AddListener(() => RestartGame());
         Bootstrap.ChangeGameState(EGamestate.Game);
     }
 
     private void SetupTowers()
     {
-        var towersComponents = FindObjectsOfType<TowerComponent>();
+        game.towersComponents = FindObjectsOfType<TowerComponent>();
         var playerSwitchingSystem = Bootstrap.GetSystem<PlayerSwitchingSystem>();
-        foreach (var item in towersComponents)
+        foreach (var item in game.towersComponents)
         {
             item.OnClimbOnTowerAction += playerSwitchingSystem.ActivateTower;
         }
+    }
+
+    public void RestartGame()
+    {
+        var playerSwitchingSystem = Bootstrap.GetSystem<PlayerSwitchingSystem>();
+        foreach (var item in game.towersComponents)
+        {
+            item.OnClimbOnTowerAction -= playerSwitchingSystem.ActivateTower;
+        }
+        Bootstrap.GameRestart(0);
     }
 
     private void CreatEnemies()

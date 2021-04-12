@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Collections.Generic;
 
 namespace Kuhpik
 {
@@ -14,5 +13,6 @@ namespace Kuhpik
         public Transform playerShootingPoint;
         public Transform towerCamera;
         public List<BulletComponent> bullets;
+        public IEnumerable<TowerComponent> towersComponents;
     }
 }
