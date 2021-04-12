@@ -40,7 +40,6 @@ public class CollisionSystem : GameSystem, IFixedUpdating
             Collider[] colliders = Physics.OverlapSphere(bullet.transform.position, bullet.radius);
             foreach (var collider in colliders)
             {
-                Debug.Log(collider.gameObject.name);
                 HitBoxComponent hitBoxComponent = collider.gameObject.GetComponent<HitBoxComponent>();
                 if (hitBoxComponent)
                 {

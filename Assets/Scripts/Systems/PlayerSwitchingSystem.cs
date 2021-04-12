@@ -33,6 +33,10 @@ public class PlayerSwitchingSystem : GameSystem, IIniting
 
     private void SwitchPlayerAction(bool switchOnShooting)
     {
+        if(player.canShoot && switchOnShooting)
+        {
+            return;
+        }
         player.canMove = !switchOnShooting;
         cameraSwitchingAnimator.SetBool("Shoot Mode", switchOnShooting);
         if (switchOnShooting)
