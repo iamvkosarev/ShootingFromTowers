@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Kuhpik;
+using System;
+
 
 public class PlayerSwitchingSystem : GameSystem, IIniting
 {
     [SerializeField] private Animator cameraSwitchingAnimator;
     [SerializeField] private Button switchOffShootingButton;
-    [SerializeField] private Transform pointForShooting;
+
+    private TowerComponent currentTowerComponent;
 
     void IIniting.OnInit()
     {
@@ -19,14 +22,13 @@ public class PlayerSwitchingSystem : GameSystem, IIniting
         });
     }
 
-    private void OnTriggerEnter(Collider other)
+    public void ActivateTower(TowerComponent towerComponent)
     {
-        if (other.gameObject.GetComponent<PlayerElementsComponent>())
-        {
-            SwitchPlayerAction(true);
-        }
-
-    }
+        currentTowerComponent = towerComponent;
+        game.towerCamera.position = towerComponent.cameraPoint.position;
+        game.towerCamera.rotation = towerComponent.cameraPoint.rotation;
+        SwitchPlayerAction(true);
+    } 
 
     private void SwitchPlayerAction(bool switchOnShooting)
     {
@@ -34,7 +36,7 @@ public class PlayerSwitchingSystem : GameSystem, IIniting
         cameraSwitchingAnimator.SetBool("Shoot Mode", switchOnShooting);
         if (switchOnShooting)
         {
-            game.playerElements.navMeshAgent.destination = pointForShooting.position;
+            game.playerElements.navMeshAgent.destination = currentTowerComponent.pointForShooting.position;
             StartCoroutine(WaitWhilePrepering(switchOnShooting));
         }
         else

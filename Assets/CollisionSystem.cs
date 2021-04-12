@@ -8,15 +8,19 @@ using Supyrb;
 
 public class CollisionSystem : GameSystem, IFixedUpdating
 {
-    [SerializeField] private float bulletRadius;
     [ReadOnly] public List<BulletComponent> bullets;
     Action<EnemieElementsComponent, Vector3> enemieHitCollisionAction;
     private void OnEnable()
     {
         enemieHitCollisionAction = (enemieElements, attackPos) =>
         {
-            ChangeEnemieRagdollState(enemieElements, true);
-            enemieElements.navMeshAgent.enabled = false;
+            if (!enemieElements.isFallen)
+            {
+                enemieElements.isFallen = true;
+                ChangeEnemieRagdollState(enemieElements, true);
+                enemieElements.navMeshAgent.enabled = false;
+            }
+            ApplyForceToEnemie(enemieElements, attackPos);
         };
         Signals.Get<OnHitEnemieSignal>().AddListener(enemieHitCollisionAction);
     }
@@ -33,7 +37,7 @@ public class CollisionSystem : GameSystem, IFixedUpdating
         foreach (var bullet in game.bullets)
         {
             if (!bullet.canCheck) { continue; }
-            Collider[] colliders = Physics.OverlapSphere(bullet.transform.position, bulletRadius);
+            Collider[] colliders = Physics.OverlapSphere(bullet.transform.position, bullet.radius);
             foreach (var collider in colliders)
             {
                 Debug.Log(collider.gameObject.name);
@@ -59,6 +63,15 @@ public class CollisionSystem : GameSystem, IFixedUpdating
         bullet.gameObject.SetActive(false);
     }
 
+    public void ApplyForceToEnemie(EnemieElementsComponent enemieElementsComponent, Vector3 positionOfForce)
+    {
+        var hips = enemieElementsComponent.animator.GetBoneTransform(HumanBodyBones.Hips);
+        float forcePower = UnityEngine.Random.Range(config.GetValue(EGameValue.minPowerOfBulletsExplosion),
+            config.GetValue(EGameValue.maxPowerOfBulletsExplosion));
+        Vector3 forceDirection = (hips.position - positionOfForce).normalized;
+        var rb = hips.GetComponent<Rigidbody>();
+        rb.AddForce(forcePower * forceDirection, ForceMode.VelocityChange);
+    }
     public void ChangeEnemieRagdollState(EnemieElementsComponent enemie, bool activateRagdoll)
     {
         foreach (var rb in enemie.ragdollsRigidbodies)

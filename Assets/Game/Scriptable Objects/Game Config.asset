@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameValueConfigs:
   - type: 0
-    value: 0
-    minmaxValue: {x: 0, y: 0}
+    value: 20
+    minmaxValue: {x: 0, y: 20}
   - type: 1
-    value: 0
-    minmaxValue: {x: 0, y: 0}
+    value: 30
+    minmaxValue: {x: 0, y: 30}
   - type: 2
     value: 6
     minmaxValue: {x: 0, y: 30}

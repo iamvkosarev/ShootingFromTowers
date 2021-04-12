@@ -7,6 +7,7 @@ using System;
 public class LoadingSystem : GameSystem, IIniting
 {
     [SerializeField] private Camera camera;
+    [SerializeField] private Transform towerCamera;
     [SerializeField] private Transform cameraTarget;
     [SerializeField] private Transform playerTarget;
     [SerializeField] private Transform playerShootingPoint;
@@ -17,8 +18,19 @@ public class LoadingSystem : GameSystem, IIniting
     {
         config.Init(config.GameValusConfigs);
         CreatEnemies();
+        SetupTowers();
         SetParameters();
         Bootstrap.ChangeGameState(EGamestate.Game);
+    }
+
+    private void SetupTowers()
+    {
+        var towersComponents = FindObjectsOfType<TowerComponent>();
+        var playerSwitchingSystem = Bootstrap.GetSystem<PlayerSwitchingSystem>();
+        foreach (var item in towersComponents)
+        {
+            item.OnClimbOnTowerAction += playerSwitchingSystem.ActivateTower;
+        }
     }
 
     private void CreatEnemies()
@@ -39,6 +51,7 @@ public class LoadingSystem : GameSystem, IIniting
 
     private void SetParameters()
     {
+        game.towerCamera = towerCamera;
         game.bullets = new List<BulletComponent>();
         game.playerShootingPoint = playerShootingPoint;
         game.playerElements = playerElements;

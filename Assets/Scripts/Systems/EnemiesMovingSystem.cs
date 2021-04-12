@@ -23,6 +23,9 @@ public class EnemiesMovingSystem : GameSystem, IUpdating
 
     private void OnDrawGizmosSelected()
     {
+        Gizmos.color = Color.green * 0.3f;
+        Gizmos.DrawCube(movingZonePos, movingZoneSize);
+
         Gizmos.color = Color.red;
         if (game.enemies != null)
         {
@@ -32,8 +35,6 @@ public class EnemiesMovingSystem : GameSystem, IUpdating
                 Gizmos.DrawLine(game.enemies[i].currentMovingPos, game.enemies[i].transform.position);
             }
         }
-        Gizmos.color = Color.green * 0.3f;
-        Gizmos.DrawCube(movingZonePos, movingZoneSize);
     }
     public Vector3 GetPointInMovingZone()
     {

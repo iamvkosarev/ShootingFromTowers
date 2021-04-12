@@ -12,6 +12,7 @@ namespace Kuhpik
         public List<EnemieElementsComponent> enemies;
         public Animator cameraSwitchingAnimator;
         public Transform playerShootingPoint;
-        internal List<BulletComponent> bullets;
+        public Transform towerCamera;
+        public List<BulletComponent> bullets;
     }
 }

@@ -12,10 +12,6 @@ public class HitBoxComponent : MonoBehaviour
 
     public void ActivateAttack(Vector3 attackPos)
     {
-        if (!enemieElements.isFallen)
-        {
-            enemieElements.isFallen = true;
-            Signals.Get<OnHitEnemieSignal>().Dispatch(enemieElements, attackPos);
-        }
+         Signals.Get<OnHitEnemieSignal>().Dispatch(enemieElements, attackPos);
     }
 }

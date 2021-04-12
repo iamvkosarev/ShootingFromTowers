@@ -4799,6 +4799,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movingEffect: {fileID: 934982211848700183}
+  radius: 0.3
   canCheck: 0
 --- !u!1 &8175294733322361531
 GameObject:
@@ -4828,7 +4829,7 @@ Transform:
   m_GameObject: {fileID: 8175294733322361531}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_Children: []
   m_Father: {fileID: 934982212704633619}
   m_RootOrder: 1
